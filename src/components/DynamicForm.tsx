@@ -26,7 +26,7 @@ const DynamicForm: React.FC<{ fields: FormField[] }> = ({ fields }) => {
   const [show , setShow] = useState<boolean>(false)
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<{ name?: string; value: unknown }>) => {
-    const name = event.target.name;
+    const name = event.target.name as string;
     const value = event.target.value as string; // Cast to string
     setFormState(prev => ({
       ...prev,
