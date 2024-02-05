@@ -4,7 +4,7 @@ import { TextField, FormControl, RadioGroup, FormControlLabel, Radio, Select, Me
 interface FormField {
   id: number;
   name: string;
-  fieldType: 'TEXT' | 'LIST' | 'RADIO'; // Ensure these match your fieldData
+  fieldType: string; // Ensure these match your fieldData
   minLength?: number;
   maxLength?: number;
   defaultValue: string;
