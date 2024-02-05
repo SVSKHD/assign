@@ -1,7 +1,6 @@
 import DynamicForm from '@/components/DynamicForm';
 
-const fieldData = {
-  data: [
+const fieldData = [
     {
       id: 1,
       name: "Full Name",
@@ -37,10 +36,8 @@ const fieldData = {
       listOfValues: ["Yes", "No"]
     }
   ]
-};
-
 const MyPage = () => {
-  return <DynamicForm fields={fieldData.data} />;
+  return <DynamicForm fields={fieldData} />;
 };
 
 export default MyPage;
