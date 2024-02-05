@@ -23,16 +23,24 @@ const DynamicForm: React.FC<{ fields: FormField[] }> = ({ fields }) => {
   }, {} as FormState);
 
   const [formState, setFormState] = useState<FormState>(initialState);
+  const [show , setShow] = useState<boolean>(false)
 
-  const handleChange = (event: any) => {
-    const name = event.target.name;
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement | { name?: string; value: unknown }>) => {
+    const name = event.target.name || '';
     const value = event.target.value;
-    setFormState(prev => ({ ...prev, [name]: value }));
+  
+    // Directly update the form state without asserting the value type
+    setFormState(prev => ({
+      ...prev,
+      [name]: value
+    }));
   };
+  
 
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
-    console.log('Form Submitted', formState);
+    setShow(true)
+    console.log('Form Submitted', formState , show);
     // Add your submit logic here (e.g., API call)
   };
 
@@ -102,7 +110,7 @@ const DynamicForm: React.FC<{ fields: FormField[] }> = ({ fields }) => {
           </form>
         </CardContent>
         <CardActions>
-        <div>{JSON.stringify(formState, null, 2)}</div>
+        <div>{show ? JSON.stringify(formState, null, 2) : "No data yet"}</div>
         </CardActions>
       </Card>
       <br/>
