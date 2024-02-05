@@ -25,11 +25,9 @@ const DynamicForm: React.FC<{ fields: FormField[] }> = ({ fields }) => {
   const [formState, setFormState] = useState<FormState>(initialState);
   const [show , setShow] = useState<boolean>(false)
 
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement | { name?: string; value: unknown }>) => {
-    const name = event.target.name || '';
-    const value = event.target.value;
-  
-    // Directly update the form state without asserting the value type
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<{ name?: string; value: unknown }>) => {
+    const name = event.target.name;
+    const value = event.target.value as string; // Cast to string
     setFormState(prev => ({
       ...prev,
       [name]: value
