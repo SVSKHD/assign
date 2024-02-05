@@ -1,4 +1,4 @@
-import DynamicForm from '@/components/DynamicForm';
+import DynamicForm from '../components/DynamicForm';
 
 const fieldData = [
     {
