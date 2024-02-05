@@ -1,15 +1,15 @@
-import React, { useState } from 'react';
+import React, { useState , useEffect} from 'react';
 import { TextField, FormControl, RadioGroup, FormControlLabel, Radio, Select, MenuItem, Button, Card, CardContent, Typography , InputLabel, CardActions} from '@mui/material';
 
 interface FormField {
   id: number;
   name: string;
-  fieldType: 'TEXT' | 'LIST' | 'RADIO';
+  fieldType: 'TEXT' | 'LIST' | 'RADIO'; // Ensure these match your fieldData
   minLength?: number;
   maxLength?: number;
   defaultValue: string;
   required: boolean;
-  listOfValues?: string[];
+  listOfValues?: string[]; // Only for LIST and RADIO types
 }
 
 interface FormState {
@@ -21,23 +21,24 @@ const DynamicForm: React.FC<{ fields: FormField[] }> = ({ fields }) => {
     acc[field.name] = field.defaultValue;
     return acc;
   }, {} as FormState);
-
   const [formState, setFormState] = useState<FormState>(initialState);
   const [show , setShow] = useState<boolean>(false)
+  useEffect(() => {
+    if (show) {
+      console.log('Form Submitted', formState, show);
+      // Any other actions you want to perform after show is set to true
+    }
+  }, [show]);
 
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<{ name?: string; value: unknown }>) => {
-    const name = event.target.name as string;
-    const value = event.target.value as string; // Cast to string
-    setFormState(prev => ({
-      ...prev,
-      [name]: value
-    }));
+  const handleChange = (event: any) => {
+    const name = event.target.name;
+    const value = event.target.value;
+    setFormState(prev => ({ ...prev, [name]: value }));
   };
-  
 
-  const handleSubmit = (event: React.FormEvent) => {
+  const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
-    setShow(true)
+    await setShow(true)
     console.log('Form Submitted', formState , show);
     // Add your submit logic here (e.g., API call)
   };
@@ -50,6 +51,7 @@ const DynamicForm: React.FC<{ fields: FormField[] }> = ({ fields }) => {
             fullWidth
             variant="outlined"
             margin="normal"
+            id={field.fieldType}
             name={field.name}
             label={field.name}
             value={formState[field.name]}
@@ -65,6 +67,7 @@ const DynamicForm: React.FC<{ fields: FormField[] }> = ({ fields }) => {
               labelId={`${field.name}-label`}
               value={formState[field.name]}
               onChange={handleChange}
+              id={field.fieldType}
               label={field.name}
               name={field.name}
               required={field.required}
@@ -80,7 +83,7 @@ const DynamicForm: React.FC<{ fields: FormField[] }> = ({ fields }) => {
       case 'RADIO':
         return (
           <FormControl component="fieldset" margin="normal">
-            <RadioGroup name={field.name} value={formState[field.name]} onChange={handleChange}>
+            <RadioGroup name={field.name} id={field.fieldType} value={formState[field.name]} onChange={handleChange}>
               {field.listOfValues?.map(value => (
                 <FormControlLabel key={value} value={value} control={<Radio />} label={value} />
               ))}
@@ -100,15 +103,15 @@ const DynamicForm: React.FC<{ fields: FormField[] }> = ({ fields }) => {
           <Typography variant="h5" component="h2" gutterBottom>
             Dynamic Signup Form
           </Typography>
-          <form onSubmit={handleSubmit}>
+        
             {fields.map(field => renderInput(field))}
-            <Button type="submit" variant="contained" color="primary" style={{ marginTop: '20px' }}>
+            <Button type="submit" onClick={handleSubmit} variant="contained" color="primary" style={{ marginTop: '20px' }}>
               Submit
             </Button>
-          </form>
+       
         </CardContent>
         <CardActions>
-        <div>{show ? JSON.stringify(formState, null, 2) : "No data yet"}</div>
+        <div>{show ? JSON.stringify(formState) : "No data yet"}</div>
         </CardActions>
       </Card>
       <br/>
