@@ -1,5 +1,5 @@
-import React, { useState , useEffect} from 'react';
-import { TextField, FormControl, RadioGroup, FormControlLabel, Radio, Select, MenuItem, Button, Card, CardContent, Typography , InputLabel, CardActions} from '@mui/material';
+import React, { useState, useEffect } from 'react';
+import { TextField, FormControl, RadioGroup, FormControlLabel, Radio, Select, MenuItem, Button, Card, CardContent, Typography, CardActions, Snackbar , Alert } from '@mui/material';
 
 interface FormField {
   id: number;
@@ -22,13 +22,22 @@ const DynamicForm: React.FC<{ fields: FormField[] }> = ({ fields }) => {
     return acc;
   }, {} as FormState);
   const [formState, setFormState] = useState<FormState>(initialState);
-  const [show , setShow] = useState<boolean>(false)
+  const [show, setShow] = useState<boolean>(false);
+  const [error, setError] = useState<string>(''); // State for error message
+  const [snackbarOpen, setSnackbarOpen] = useState<boolean>(false); // State for Snackbar visibility
+
   useEffect(() => {
     if (show) {
       console.log('Form Submitted', formState, show);
-      // Any other actions you want to perform after show is set to true
+      // Check for errors and set the error message if any
+      if (!formState['Full Name'] || !formState['Email']) {
+        setError('Name and Email are required.'); // Set the error message
+        setSnackbarOpen(true); // Show the Snackbar
+      } else {
+        // Your submit logic here (e.g., API call)
+      }
     }
-  }, [show]);
+  }, [show, formState]);
 
   const handleChange = (event: any) => {
     const name = event.target.name;
@@ -38,9 +47,11 @@ const DynamicForm: React.FC<{ fields: FormField[] }> = ({ fields }) => {
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
-    await setShow(true)
-    console.log('Form Submitted', formState , show);
-    // Add your submit logic here (e.g., API call)
+    await setShow(true);
+  };
+
+  const handleCloseSnackbar = () => {
+    setSnackbarOpen(false); // Close the Snackbar
   };
 
   const renderInput = (field: FormField) => {
@@ -97,25 +108,32 @@ const DynamicForm: React.FC<{ fields: FormField[] }> = ({ fields }) => {
 
   return (
     <div>
-    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh' }}>
-      <Card>
-        <CardContent>
-          <Typography variant="h5" component="h2" gutterBottom>
-            Dynamic Signup Form
-          </Typography>
-        
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh' }}>
+        <Card>
+          <CardContent>
+            <Typography variant="h5" component="h2" gutterBottom>
+              Dynamic Signup Form
+            </Typography>
+
             {fields.map(field => renderInput(field))}
             <Button type="submit" onClick={handleSubmit} variant="contained" color="primary" style={{ marginTop: '20px' }}>
               Submit
             </Button>
-       
-        </CardContent>
-        <CardActions>
-        <div>{show ? JSON.stringify(formState) : "No data yet"}</div>
-        </CardActions>
-      </Card>
-      <br/>
-    </div>
+
+          </CardContent>
+          <CardActions>
+            <div>{show ? JSON.stringify(formState) : "No data yet"}</div>
+          </CardActions>
+        </Card>
+        <br />
+      </div>
+
+      {/* Snackbar for displaying error message */}
+      <Snackbar open={snackbarOpen} autoHideDuration={6000} onClose={handleCloseSnackbar}>
+        <Alert onClose={handleCloseSnackbar} severity="error">
+          {error}
+        </Alert>
+      </Snackbar>
     </div>
   );
 };
